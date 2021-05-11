@@ -16,5 +16,7 @@ names(vec) = c("minutes", "hours", "days", "rank_NA", "rank_world", "books", "mo
 
 out = c(lev, last_seen, vec)
 
-t(out) %>% as_tibble() %>% write_csv(file=paste0("League_", Sys.Date(), ".csv"))
+out.df = t(out) %>% as_tibble() 
+out.df %>% write_csv(file=paste0("League_", Sys.Date(), ".csv"))
+out.df %>% write_csv(file="League_cumulative.csv", append=TRUE)
 
