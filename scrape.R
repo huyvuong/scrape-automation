@@ -22,10 +22,10 @@ output_file = "League_timestamp.csv"
 if (!file.exists(output_file)) {
   list3.df %>% write_csv(file=output_file)  
 } else {
-  temp = read_csv(output_file)
+  temp = read_csv(output_file, col_types = "cccc")
   list3.df %>% bind_rows(temp) %>% distinct() %>% write_csv(output_file)
 }
-# End track on op.gg                                                                                                    
+# End track on op.gg                    
 ###############################
 
 ################################
