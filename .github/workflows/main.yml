@@ -12,7 +12,7 @@ jobs:
   # This workflow contains a single job called "build"
   autoscrape:
     # The type of runner that the job will run on
-    runs-on: macos-latest
+    runs-on: macOS-10.15
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
