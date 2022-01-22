@@ -12,11 +12,11 @@ list2 = html_page %>% html_elements(".GameStats") %>% html_element("span") %>% h
 list3  = Map(c, list1, list2)
 # convert list to data frame
 list3.df = list3 %>% map_df( function(x) {
-  names(x) = c("GameType", "GameResult", "GameLength", "TimeStamp")
+  names(x) = c("GameType", "GameResult", "GameLength", "TimeStamp_PST")
   as_tibble_row(x)
 })
 # convert epoch time to local date
-list3.df = list3.df %>% mutate(TimeStamp = as.character(as.POSIXct(as.numeric(TimeStamp), origin = "1970-01-01")))                                                                                            
+list3.df = list3.df %>% mutate(TimeStamp_PST = as.character(as.POSIXct(as.numeric(TimeStamp_PST), tz="PST8PDT",origin = "1970-01-01")))                                                                                            
 # remove duplicate records
 output_file = "League_timestamp.csv"
 if (!file.exists(output_file)) {
