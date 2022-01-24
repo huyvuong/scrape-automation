@@ -30,20 +30,26 @@ if (!file.exists(output_file)) {
 
 ################################
 # Track on wol.gg
-dat = read_html('https://wol.gg/stats/na/h2cosecretary/')
-# extract elements
-lev = dat %>% html_elements("#level") %>% html_text() %>% parse_number()
-names(lev) = "level"
-last_seen = dat %>% html_elements("#last-seen") %>% html_text()
-names(last_seen) = "last_seen"
-scrape = dat %>% html_elements("p") %>% html_text()
-vec = parse_number(scrape)
-names(vec) = c("minutes", "hours", "days", "rank_NA", "rank_world", "books", "movies" , "kilometer")
-out = c(lev, last_seen, vec)
-# convert to data frame
-out.df = t(out) %>% as_tibble() 
-#out.df %>% write_csv(file=paste0("League_", Sys.Date(), ".csv"))
-# output file
-out.df %>% write_csv(file="League_cumulative.csv", append=TRUE)
+# tryCatch to handle error 524 server down                                                                                                    
+out = tryCatch {
+  dat = read_html('https://wol.gg/stats/na/h2cosecretary/')
+  # extract elements
+  lev = dat %>% html_elements("#level") %>% html_text() %>% parse_number()
+  names(lev) = "level"
+  last_seen = dat %>% html_elements("#last-seen") %>% html_text()
+  names(last_seen) = "last_seen"
+  scrape = dat %>% html_elements("p") %>% html_text()
+  vec = parse_number(scrape)
+  names(vec) = c("minutes", "hours", "days", "rank_NA", "rank_world", "books", "movies" , "kilometer")
+  out = c(lev, last_seen, vec)
+  # convert to data frame
+  out.df = t(out) %>% as_tibble() 
+  #out.df %>% write_csv(file=paste0("League_", Sys.Date(), ".csv"))
+  # output file
+  out.df %>% write_csv(file="League_cumulative.csv", append=TRUE)
+},
+error= function(cond) {
+  message(cond)
+}
 # End track on wol.gg                                                                                        
 ###############################
