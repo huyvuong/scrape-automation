@@ -4,34 +4,39 @@ library(readr)
 
 ###############################
 # Track on op.gg
-html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Secretary")
-# extract elements as list
-list1 = html_page %>% html_elements(".GameStats") %>% html_text2() %>% strsplit(split="\n") %>% map(., function(x) c(x[[1]], x[[3]], x[[4]])) 
-list2 = html_page %>% html_elements(".GameStats") %>% html_element("span") %>% html_attr("data-datetime") %>% parse_number() 
-# merge two lists
-list3  = Map(c, list1, list2)
-# convert list to data frame
-list3.df = list3 %>% map_df( function(x) {
-  names(x) = c("GameType", "GameResult", "GameLength", "TimeStamp_PST")
-  as_tibble_row(x)
+out1 = tryCatch({
+  html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Secretary")
+  # extract elements as list
+  list1 = html_page %>% html_elements(".GameStats") %>% html_text2() %>% strsplit(split="\n") %>% map(., function(x) c(x[[1]], x[[3]], x[[4]])) 
+  list2 = html_page %>% html_elements(".GameStats") %>% html_element("span") %>% html_attr("data-datetime") %>% parse_number() 
+  # merge two lists
+  list3  = Map(c, list1, list2)
+  # convert list to data frame
+  list3.df = list3 %>% map_df( function(x) {
+    names(x) = c("GameType", "GameResult", "GameLength", "TimeStamp_PST")
+    as_tibble_row(x)
+  })
+  # convert epoch time to local date
+  list3.df = list3.df %>% mutate(TimeStamp_PST = as.character(as.POSIXct(as.numeric(TimeStamp_PST), tz="PST8PDT",origin = "1970-01-01")))                                                                                            
+  # remove duplicate records
+  output_file = "League_timestamp.csv"
+  if (!file.exists(output_file)) {
+    list3.df %>% write_csv(file=output_file)  
+  } else {
+    temp = read_csv(output_file, col_types = "cccc")
+    list3.df %>% bind_rows(temp) %>% distinct() %>% write_csv(output_file)  
+  }
+},
+error = function(cond) {
+  message(cond)
 })
-# convert epoch time to local date
-list3.df = list3.df %>% mutate(TimeStamp_PST = as.character(as.POSIXct(as.numeric(TimeStamp_PST), tz="PST8PDT",origin = "1970-01-01")))                                                                                            
-# remove duplicate records
-output_file = "League_timestamp.csv"
-if (!file.exists(output_file)) {
-  list3.df %>% write_csv(file=output_file)  
-} else {
-  temp = read_csv(output_file, col_types = "cccc")
-  list3.df %>% bind_rows(temp) %>% distinct() %>% write_csv(output_file)
-}
 # End track on op.gg                    
 ###############################
 
 ################################
 # Track on wol.gg
 # tryCatch to handle error 524 server down                                                                                                    
-out = tryCatch {
+out2 = tryCatch ({
   dat = read_html('https://wol.gg/stats/na/h2cosecretary/')
   # extract elements
   lev = dat %>% html_elements("#level") %>% html_text() %>% parse_number()
@@ -48,8 +53,8 @@ out = tryCatch {
   # output file
   out.df %>% write_csv(file="League_cumulative.csv", append=TRUE)
 },
-error= function(cond) {
+error = function(cond) {
   message(cond)
-}
+})
 # End track on wol.gg                                                                                        
 ###############################
