@@ -5,7 +5,8 @@ library(readr)
 ###############################
 # Track on op.gg
 out1 = tryCatch({
-  html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Secretary")
+  #html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Secretary")
+  html_page = read_html("https://na.op.gg/summoner/userName=Spectateconcac")
   # extract elements as list
   list1 = html_page %>% html_elements(".GameStats") %>% html_text2() %>% strsplit(split="\n") %>% map(., function(x) c(x[[1]], x[[3]], x[[4]])) 
   list2 = html_page %>% html_elements(".GameStats") %>% html_element("span") %>% html_attr("data-datetime") %>% parse_number() 
@@ -37,7 +38,8 @@ error = function(cond) {
 # Track on wol.gg
 # tryCatch to handle error 524 server down                                                                                                    
 out2 = tryCatch ({
-  dat = read_html('https://wol.gg/stats/na/h2cosecretary/')
+  #dat = read_html('https://wol.gg/stats/na/h2cosecretary/')
+  dat = read_html("https://wol.gg/stats/na/spectateconcac/")
   # extract elements
   lev = dat %>% html_elements("#level") %>% html_text() %>% parse_number()
   names(lev) = "level"
