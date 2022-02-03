@@ -6,7 +6,9 @@ library(readr)
 # Track on op.gg
 out1 = tryCatch({
   #html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Secretary")
-  html_page = read_html("https://na.op.gg/summoner/userName=Spectateconcac")
+  #html_page = read_html("https://na.op.gg/summoner/userName=Spectateconcac")
+  html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Gabriel")
+  
   # extract elements as list
   list1 = html_page %>% html_elements(".GameStats") %>% html_text2() %>% strsplit(split="\n") %>% map(., function(x) c(x[[1]], x[[3]], x[[4]])) 
   list2 = html_page %>% html_elements(".GameStats") %>% html_element("span") %>% html_attr("data-datetime") %>% parse_number() 
