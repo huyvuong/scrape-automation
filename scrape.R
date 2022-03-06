@@ -7,27 +7,23 @@ library(readr)
 out1 = tryCatch({
   #html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Secretary")
   #html_page = read_html("https://na.op.gg/summoner/userName=Spectateconcac")
-  html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Gabriel")
+  #html_page = read_html("https://na.op.gg/summoner/userName=H2Co%20Gabriel")
+  html_page = read_html("https://na.op.gg/summoners/na/H2Co%20Gabriel")
   
-  # extract elements as list
-  list1 = html_page %>% html_elements(".GameStats") %>% html_text2() %>% strsplit(split="\n") %>% map(., function(x) c(x[[1]], x[[3]], x[[4]])) 
-  list2 = html_page %>% html_elements(".GameStats") %>% html_element("span") %>% html_attr("data-datetime") %>% parse_number() 
-  # merge two lists
-  list3  = Map(c, list1, list2)
-  # convert list to data frame
-  list3.df = list3 %>% map_df( function(x) {
-    names(x) = c("GameType", "GameResult", "GameLength", "TimeStamp_PST")
-    as_tibble_row(x)
-  })
-  # convert epoch time to local date
-  list3.df = list3.df %>% mutate(TimeStamp_PST = as.character(as.POSIXct(as.numeric(TimeStamp_PST), tz="PST8PDT",origin = "1970-01-01")))                                                                                            
+  time_stamp = html_page %>% html_elements(".time-stamp") %>% html_text()
+  game_length = html_page %>% html_elements(".game-length") %>% html_text()
+  game_result = html_page %>% html_elements(".game-result") %>% html_text()
+  #type = html_page %>% html_elements(".type") %>% html_text()
+  
+  df = cbind.data.frame(time_stamp, game_length, game_result)
+  
   # remove duplicate records
-  output_file = "League_timestamp.csv"
+  output_file = "League_timestamp_new.csv"
   if (!file.exists(output_file)) {
-    list3.df %>% write_csv(file=output_file)  
+    df %>% write_csv(file=output_file)  
   } else {
-    temp = read_csv(output_file, col_types = "cccc")
-    list3.df %>% bind_rows(temp) %>% distinct() %>% write_csv(output_file)  
+    temp = read_csv(output_file, col_types = "ccc")
+    df %>% bind_rows(temp) %>% distinct() %>% write_csv(output_file)  
   }
 },
 error = function(cond) {
