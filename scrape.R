@@ -14,8 +14,8 @@ out1 = tryCatch({
   game_length = html_page %>% html_elements(".game-length") %>% html_text()
   game_result = html_page %>% html_elements(".game-result") %>% html_text()
   #type = html_page %>% html_elements(".type") %>% html_text()
-  
-  df = cbind.data.frame(time_stamp, game_length, game_result)
+  today = lubridate::now (tzone="PST8PDT")
+  df = cbind.data.frame(today, time_stamp, game_length, game_result)
   
   # remove duplicate records
   output_file = "League_timestamp_new.csv"
