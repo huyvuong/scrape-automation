@@ -37,7 +37,8 @@ error = function(cond) {
 # tryCatch to handle error 524 server down                                                                                                    
 out2 = tryCatch ({
   #dat = read_html('https://wol.gg/stats/na/h2cosecretary/')
-  dat = read_html("https://wol.gg/stats/na/spectateconcac/")
+  #dat = read_html("https://wol.gg/stats/na/spectateconcac/")
+  dat = read_html("https://wol.gg/stats/na/H2CoGabriel/")
   # extract elements
   lev = dat %>% html_elements("#level") %>% html_text() %>% parse_number()
   names(lev) = "level"
