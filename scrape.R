@@ -22,7 +22,7 @@ out1 = tryCatch({
   if (!file.exists(output_file)) {
     df %>% write_csv(file=output_file)  
   } else {
-    temp = read_csv(output_file, col_types = "ccc")
+    temp = read_csv(output_file)
     df %>% bind_rows(temp) %>% distinct() %>% write_csv(output_file)  
   }
 },
